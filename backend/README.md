@@ -47,7 +47,37 @@ backend/
 └── requirements.txt         # Dependencies
 ```
 
+## WebSocket Events
+
+**Client → Server:**
+- `register` - Register your Node ID with the server
+  ```json
+  { "node_id": "64-char-hex-string" }
+  ```
+
+- `send_message` - Send a message to another user
+  ```json
+  {
+    "sender": "your-node-id",
+    "receiver": "receiver-node-id",
+    "message": "Hello!",
+    "timestamp": 1234567890
+  }
+  ```
+
+**Server → Client:**
+- `connection_response` - Connection confirmed
+- `registered` - Registration successful
+- `receive_message` - Incoming message from another user
+- `message_status` - Message delivery status
+- `error` - Error notification
+
 ## Testing
 
-You can test WebSocket connection using any socket.io client or browser console.
+Run the test script (make sure server is running first):
+```bash
+python test_socket.py
+```
+
+Or use any socket.io client to connect to `http://localhost:5000`
 
