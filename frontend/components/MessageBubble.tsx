@@ -26,7 +26,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
   }
 
   return (
-    <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+    <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-4 animate-slide-up`}>
       <div className={`max-w-[75%] ${isSent ? 'items-end' : 'items-start'} flex flex-col`}>
         {/* Sender info */}
         <div className={`text-xs text-slate-500 dark:text-slate-400 mb-1 px-1 ${isSent ? 'text-right' : 'text-left'}`}>
@@ -35,13 +35,13 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
 
         {/* Message bubble */}
         <div
-          className={`px-4 py-2.5 rounded-2xl break-words ${
+          className={`px-4 py-2.5 rounded-2xl break-words shadow-md transition-all hover:shadow-lg ${
             isSent
               ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-md'
               : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-bl-md'
-          } shadow-sm`}
+          }`}
         >
-          <p className="text-sm whitespace-pre-wrap">{message.message}</p>
+          <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.message}</p>
         </div>
 
         {/* Timestamp */}
