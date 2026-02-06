@@ -3,11 +3,27 @@
 import { useState } from 'react'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import ReceiverInput from '@/components/ReceiverInput'
+import MessageInput from '@/components/MessageInput'
+import { nodeIdSchema } from '@/lib/validation'
 
 export default function Home() {
-  const [myNodeId, setMyNodeId] = useState<string | null>(null)
+  const [myNodeId, setMyNodeId] = useState<string>('a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd')
   const [receiverNodeId, setReceiverNodeId] = useState<string>('')
-  const { connectionStatus } = useWebSocket(myNodeId)
+  const { connectionStatus, sendMessage } = useWebSocket(myNodeId)
+
+  const handleSendMessage = (message: string) => {
+    // validate receiver ID before sending
+    const isValidReceiver = nodeIdSchema.safeParse(receiverNodeId)
+    
+    if (!isValidReceiver.success) {
+      console.error('Invalid receiver Node ID')
+      return
+    }
+
+    sendMessage(receiverNodeId, message, myNodeId)
+  }
+
+  const canSendMessage = receiverNodeId.length === 64 && connectionStatus.connected
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6">
@@ -43,8 +59,15 @@ export default function Home() {
             currentNodeId={receiverNodeId}
           />
 
+          {/* Message Input */}
+          <MessageInput 
+            onSendMessage={handleSendMessage}
+            disabled={!canSendMessage}
+            isConnected={connectionStatus.connected}
+          />
+
           <p className="text-center text-slate-500 text-sm">
-            Message input coming next... 💬
+            Message display coming next... 📬
           </p>
         </div>
       </div>
