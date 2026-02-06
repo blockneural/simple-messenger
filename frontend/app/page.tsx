@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import ReceiverInput from '@/components/ReceiverInput'
 import MessageInput from '@/components/MessageInput'
+import MessageList from '@/components/MessageList'
 import { nodeIdSchema } from '@/lib/validation'
 
 export default function Home() {
   const [myNodeId, setMyNodeId] = useState<string>('a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd')
   const [receiverNodeId, setReceiverNodeId] = useState<string>('')
-  const { connectionStatus, sendMessage } = useWebSocket(myNodeId)
+  const { connectionStatus, messages, sendMessage } = useWebSocket(myNodeId)
 
   const handleSendMessage = (message: string) => {
     // validate receiver ID before sending
@@ -59,16 +60,15 @@ export default function Home() {
             currentNodeId={receiverNodeId}
           />
 
+          {/* Message List */}
+          <MessageList messages={messages} />
+
           {/* Message Input */}
           <MessageInput 
             onSendMessage={handleSendMessage}
             disabled={!canSendMessage}
             isConnected={connectionStatus.connected}
           />
-
-          <p className="text-center text-slate-500 text-sm">
-            Message display coming next... 📬
-          </p>
         </div>
       </div>
     </main>
