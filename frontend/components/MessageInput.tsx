@@ -61,7 +61,24 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(onSubmit)()
+      
+      // Get current value directly from textarea
+      const currentValue = (e.target as HTMLTextAreaElement).value
+      
+      if (!currentValue || !currentValue.trim()) {
+        return // Don't submit if empty
+      }
+      
+      if (!isConnected || disabled) return
+      
+      // Submit with current value
+      setIsSending(true)
+      onSendMessage(currentValue)
+      reset()
+      
+      setTimeout(() => {
+        setIsSending(false)
+      }, 300)
     }
   }
 

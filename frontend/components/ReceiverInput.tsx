@@ -39,13 +39,17 @@ export default function ReceiverInput({ onNodeIdChange, currentNodeId }: Receive
   }
 
   // check validation on change
-  const handleChange = () => {
-    const result = nodeIdSchema.safeParse(nodeIdValue)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    const result = nodeIdSchema.safeParse(value)
     if (result.success) {
-      onNodeIdChange(nodeIdValue)
+      onNodeIdChange(value)
       setIsValid(true)
     } else {
       setIsValid(false)
+      if (value.length > 0) {
+        onNodeIdChange('') // Clear parent state if invalid
+      }
     }
   }
 
@@ -61,8 +65,9 @@ export default function ReceiverInput({ onNodeIdChange, currentNodeId }: Receive
         </div>
         
         <input
-          {...register('nodeId')}
-          onChange={handleChange}
+          {...register('nodeId', {
+            onChange: handleChange
+          })}
           type="text"
           placeholder="Enter 64-character hex Node ID"
           className={`w-full pl-10 pr-10 py-2.5 rounded-lg border bg-white dark:bg-slate-700 
