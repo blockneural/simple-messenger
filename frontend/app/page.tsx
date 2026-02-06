@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import ReceiverInput from '@/components/ReceiverInput'
 
 export default function Home() {
   const [myNodeId, setMyNodeId] = useState<string | null>(null)
+  const [receiverNodeId, setReceiverNodeId] = useState<string>('')
   const { connectionStatus } = useWebSocket(myNodeId)
 
   return (
@@ -19,20 +21,31 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-6">
-          <div className="text-center">
-            <div className="mb-4">
-              <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                connectionStatus.connected ? 'bg-green-500' : 'bg-red-500'
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-6 space-y-6">
+          {/* Connection Status */}
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Status
+            </span>
+            <div className="flex items-center gap-2">
+              <span className={`inline-block w-2.5 h-2.5 rounded-full ${
+                connectionStatus.connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
               }`}></span>
-              <span className="text-slate-700 dark:text-slate-300">
+              <span className="text-sm text-slate-700 dark:text-slate-300">
                 {connectionStatus.connected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
-            <p className="text-slate-500">
-              Components coming soon... 🚀
-            </p>
           </div>
+
+          {/* Receiver Input */}
+          <ReceiverInput 
+            onNodeIdChange={setReceiverNodeId}
+            currentNodeId={receiverNodeId}
+          />
+
+          <p className="text-center text-slate-500 text-sm">
+            Message input coming next... 💬
+          </p>
         </div>
       </div>
     </main>
