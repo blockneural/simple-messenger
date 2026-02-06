@@ -1,11 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { messageSchema } from '@/lib/validation'
 import { Send, Smile } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import type { EmojiClickData } from 'emoji-picker-react'
+
+// Dynamically import EmojiPicker to avoid SSR issues
+const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 
 const formSchema = z.object({
   message: messageSchema,
@@ -21,15 +26,23 @@ interface MessageInputProps {
 
 export default function MessageInput({ onSendMessage, disabled, isConnected }: MessageInputProps) {
   const [isSending, setIsSending] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [cursorPosition, setCursorPosition] = useState(0)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: { message: '' },
   })
+
+  const messageValue = watch('message') || ''
 
   const onSubmit = async (data: FormData) => {
     if (!isConnected || disabled) return
@@ -37,6 +50,7 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
     setIsSending(true)
     onSendMessage(data.message)
     reset()
+    setShowEmojiPicker(false)
     
     // simulate send delay for better UX
     setTimeout(() => {
@@ -51,13 +65,44 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
     }
   }
 
-  const openEmojiPicker = () => {
-    // trigger native emoji picker
-    // Windows: Win + .
-    // Mac: Cmd + Ctrl + Space
-    const textarea = document.querySelector('textarea')
-    if (textarea) {
-      textarea.focus()
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    const emoji = emojiData.emoji
+    const currentMessage = messageValue
+    const newMessage = 
+      currentMessage.slice(0, cursorPosition) + 
+      emoji + 
+      currentMessage.slice(cursorPosition)
+    
+    setValue('message', newMessage)
+    setCursorPosition(cursorPosition + emoji.length)
+    
+    // Focus back on textarea
+    if (textareaRef.current) {
+      textareaRef.current.focus()
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = cursorPosition + emoji.length
+          textareaRef.current.selectionEnd = cursorPosition + emoji.length
+        }
+      }, 0)
+    }
+  }
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCursorPosition(e.target.selectionStart)
+  }
+
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker)
+  }
+
+  // Custom register to handle ref
+  const { ref: registerRef, ...registerRest } = register('message')
+
+  const handleRefCallback = (e: HTMLTextAreaElement | null) => {
+    registerRef(e)
+    if (e) {
+      textareaRef.current = e
     }
   }
 
@@ -65,11 +110,13 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
       <div className="relative">
         <textarea
-          {...register('message')}
+          {...registerRest}
+          ref={handleRefCallback}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+          onChange={handleTextareaChange}
+          placeholder="Type your message... (Enter to send)"
           disabled={disabled || !isConnected}
-          rows={3}
+          rows={2}
           className={`w-full px-4 py-3 pr-24 rounded-lg border bg-white dark:bg-slate-700 
             text-slate-900 dark:text-white placeholder:text-slate-400
             focus:outline-none focus:ring-2 transition-all resize-none
@@ -83,12 +130,14 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
           <button
             type="button"
-            onClick={openEmojiPicker}
+            onClick={toggleEmojiPicker}
             disabled={disabled || !isConnected}
-            className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 
-              text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 
-              transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Open emoji picker (Win + . or Cmd + Ctrl + Space)"
+            className={`p-1.5 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+              ${showEmojiPicker 
+                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+              }`}
+            title="Toggle emoji picker"
           >
             <Smile size={20} />
           </button>
@@ -105,6 +154,29 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
             <Send size={18} />
           </button>
         </div>
+
+        {/* Emoji Picker Popup */}
+        {showEmojiPicker && (
+          <div className="absolute bottom-full right-0 mb-2 z-50 animate-slide-up">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker(false)}
+                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm z-10 shadow-lg"
+                title="Close"
+              >
+                ×
+              </button>
+              <EmojiPicker
+                onEmojiClick={handleEmojiClick}
+                width={320}
+                height={400}
+                searchPlaceHolder="Search emoji..."
+                previewConfig={{ showPreview: false }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {errors.message && (
@@ -114,14 +186,10 @@ export default function MessageInput({ onSendMessage, disabled, isConnected }: M
       )}
 
       {!isConnected && (
-        <p className="text-sm text-amber-600 dark:text-amber-400">
+        <p className="text-xs text-amber-600 dark:text-amber-400">
           Waiting for connection...
         </p>
       )}
-
-      <p className="text-xs text-slate-500 dark:text-slate-400">
-        💡 Tip: Use Win + . (Windows) or Cmd + Ctrl + Space (Mac) for emojis
-      </p>
     </form>
   )
 }

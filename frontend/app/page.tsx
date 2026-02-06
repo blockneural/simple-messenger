@@ -62,22 +62,22 @@ export default function Home() {
   const canSendMessage = receiverNodeId.length === 64 && connectionStatus.connected && myNodeId.length === 64
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6">
-      <div className="w-full max-w-4xl">
+    <main className="flex h-screen flex-col items-center justify-center p-4 overflow-hidden">
+      <div className="w-full max-w-4xl h-full flex flex-col">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">
+        <div className="text-center mb-4 flex-shrink-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
             Simple Messenger
           </h1>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Real-time messaging powered by WebSockets
           </p>
         </div>
 
         {/* Main Chat Container */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-6 space-y-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-4 space-y-4 flex-1 flex flex-col min-h-0">
           {/* Connection Status & My Node ID */}
-          <div className="space-y-3 pb-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="space-y-2 pb-3 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 Status
@@ -124,35 +124,35 @@ export default function Home() {
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-              <p className="text-sm text-red-700 dark:text-red-400">
-                ⚠️ {error}
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 animate-slide-up flex-shrink-0">
+              <p className="text-sm text-red-700 dark:text-red-400 flex items-center gap-2">
+                <span className="text-base">⚠️</span>
+                <span>{error}</span>
               </p>
             </div>
           )}
 
           {/* Receiver Input */}
-          <ReceiverInput 
-            onNodeIdChange={setReceiverNodeId}
-            currentNodeId={receiverNodeId}
-          />
+          <div className="flex-shrink-0">
+            <ReceiverInput 
+              onNodeIdChange={setReceiverNodeId}
+              currentNodeId={receiverNodeId}
+            />
+          </div>
 
           {/* Message List */}
-          <MessageList messages={messages} />
+          <div className="flex-1 min-h-0">
+            <MessageList messages={messages} />
+          </div>
 
           {/* Message Input */}
-          <MessageInput 
-            onSendMessage={handleSendMessage}
-            disabled={!canSendMessage}
-            isConnected={connectionStatus.connected}
-          />
-        </div>
-
-        {/* Instructions */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            💡 Share your Node ID with others to receive messages
-          </p>
+          <div className="flex-shrink-0">
+            <MessageInput 
+              onSendMessage={handleSendMessage}
+              disabled={!canSendMessage}
+              isConnected={connectionStatus.connected}
+            />
+          </div>
         </div>
       </div>
     </main>

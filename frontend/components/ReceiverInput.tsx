@@ -50,8 +50,8 @@ export default function ReceiverInput({ onNodeIdChange, currentNodeId }: Receive
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+    <div className="space-y-1.5">
+      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">
         Receiver Node ID
       </label>
       
@@ -88,20 +88,20 @@ export default function ReceiverInput({ onNodeIdChange, currentNodeId }: Receive
       </div>
 
       {errors.nodeId && (
-        <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-          <X size={14} />
+        <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+          <X size={12} />
           {errors.nodeId.message}
         </p>
       )}
 
       {isValid && nodeIdValue && !errors.nodeId && (
-        <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-          <Check size={14} />
+        <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+          <Check size={12} />
           Valid Node ID
         </p>
       )}
 
-      <p className="text-xs text-slate-500 dark:text-slate-400">
+      <p className="text-[10px] text-slate-500 dark:text-slate-400">
         Example: 62ffb058fd9bb911519b623d75301dc9f691b840fad90d67149f08655abbfd0f
       </p>
     </div>

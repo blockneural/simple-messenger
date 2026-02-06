@@ -22,7 +22,7 @@ export default function MessageList({ messages }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[400px] text-center">
+      <div className="flex flex-col items-center justify-center h-full text-center">
         <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
           <MessageSquare size={32} className="text-slate-400" />
         </div>
@@ -39,28 +39,8 @@ export default function MessageList({ messages }: MessageListProps) {
   return (
     <div
       ref={containerRef}
-      className="h-[400px] overflow-y-auto px-4 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700"
-      style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#cbd5e1 transparent',
-      }}
+      className="h-full overflow-y-auto px-4 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 custom-scrollbar"
     >
-      <style jsx>{`
-        div::-webkit-scrollbar {
-          width: 6px;
-        }
-        div::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        div::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 3px;
-        }
-        div::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}</style>
-
       {messages.map((message, index) => (
         <MessageBubble key={`${message.timestamp}-${index}`} message={message} />
       ))}
