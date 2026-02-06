@@ -1,63 +1,66 @@
-# Frontend - Simple Messenger
+# Frontend
 
-Next.js 14 app with real-time messaging via WebSockets.
+Next.js app for real-time messaging interface.
 
 ## Setup
 
-1. **Install dependencies**
 ```bash
+cd frontend
 npm install
+npm run dev
 ```
 
-2. **Configure environment**
+Runs on http://localhost:3000
 
-Create a `.env.local` file:
+## Configuration
+
+Create `.env.local` file:
 ```
 NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 ```
 
-3. **Run development server**
-```bash
-npm run dev
+For network testing, change to server's IP:
 ```
-
-App runs on `http://localhost:3000`
+NEXT_PUBLIC_SOCKET_URL=http://192.168.1.100:5000
+```
 
 ## Tech Stack
 
-- **Next.js 14.2** - React framework with App Router
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Radix UI** - Component primitives
-- **Lucide Icons** - Icons
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
-- **Socket.io Client** - WebSocket connection
+- Next.js 14.2 with App Router
+- React 18
+- TypeScript 5
+- Tailwind CSS
+- Socket.io-client
+- React Hook Form + Zod
+- Radix UI components
+- Lucide icons
+- emoji-picker-react
 
-## Project Structure
+## Structure
 
 ```
 frontend/
-├── app/
-│   ├── layout.tsx       # Root layout
-│   ├── page.tsx         # Main messenger page
-│   └── globals.css      # Global styles
-├── components/          # React components
-├── hooks/              # Custom hooks
-├── lib/                # Utilities
-├── types/              # TypeScript types
-└── public/             # Static assets
+├── app/              Pages and layouts
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/       React components
+│   ├── MessageBubble.tsx
+│   ├── MessageInput.tsx
+│   ├── MessageList.tsx
+│   └── ReceiverInput.tsx
+├── hooks/           Custom hooks
+│   └── useWebSocket.ts
+├── lib/             Utilities
+│   ├── socket.ts
+│   ├── utils.ts
+│   └── validation.ts
+└── types/           TypeScript types
+    └── message.ts
 ```
 
-## Available Scripts
+## Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
+- `npm run dev` - Development server
+- `npm run build` - Production build
 - `npm start` - Run production build
-- `npm run lint` - Run ESLint
-
-## Development
-
-The app connects to the Flask backend via WebSocket. Make sure the backend is running on port 5000 before starting the frontend.
-

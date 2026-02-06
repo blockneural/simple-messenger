@@ -1,201 +1,138 @@
 # Simple Messenger
 
-A lightweight real-time messaging app using WebSockets. Send text and emojis to other users via their Node ID.
+Real-time messaging app with WebSockets. Users send text and emojis to each other using Node IDs.
 
-![Status](https://img.shields.io/badge/status-ready-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
+## Prerequisites
 
-## Features
+- Python 3.8 or higher
+- Node.js 16 or higher
+- npm
 
-- ⚡ **Real-time messaging** via WebSockets
-- 💬 **Text + Emoji support**
-- 🎨 **Visual distinction**: Blue bubbles for sent, Gray for received
-- 🔐 **Node ID based** - No authentication needed
-- 🌓 **Dark mode** support
-- 📱 **Responsive design**
-- ✅ **Input validation** with real-time feedback
-- 🔄 **Auto-reconnection** on connection loss
-- 📋 **Copy Node ID** with one click
+## Setup
 
-## Quick Start
+### Backend
 
-### Prerequisites
-
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
-
-### Installation
-
-**1. Backend (Flask + SocketIO)**
+1. Navigate to backend folder:
 ```bash
 cd backend
-pip install -r requirements.txt
-python run.py
 ```
-Server runs on `http://localhost:5000`
 
-**2. Frontend (Next.js + React)**
-```bash
-cd frontend
-npm install
-npm run dev
+2. Create `.env` file with this content:
 ```
-App runs on `http://localhost:3000`
-
-### Configuration
-
-**Backend** - Create `backend/.env`:
-```env
 FLASK_ENV=development
 PORT=5000
 SECRET_KEY=your-secret-key-here
 CORS_ORIGINS=http://localhost:3000
 ```
 
-**Frontend** - Create `frontend/.env.local`:
-```env
+3. Install dependencies and run:
+```bash
+pip install -r requirements.txt
+python run.py
+```
+
+Server runs on http://localhost:5000
+
+### Frontend
+
+1. Navigate to frontend folder (open new terminal):
+```bash
+cd frontend
+```
+
+2. Create `.env.local` file with this content:
+```
 NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 ```
 
-## Usage
+3. Install dependencies and run:
+```bash
+npm install
+npm run dev
+```
 
-1. Open `http://localhost:3000`
-2. Your unique Node ID is auto-generated
-3. Copy your Node ID and share it
-4. Enter receiver's Node ID
-5. Start messaging!
+App runs on http://localhost:3000
 
-**Testing with two users:**
-- Open two browser tabs/windows
-- Each gets a unique Node ID
-- Exchange Node IDs and message each other
+Open your browser at http://localhost:3000 to use the messenger.
+
+## How it works
+
+Each user gets a unique Node ID (64 hex characters). Share your Node ID with others so they can message you.
+
+1. Open http://localhost:3000
+2. Copy your Node ID
+3. Enter receiver's Node ID
+4. Type message and send
+5. Messages appear in real-time
+
+**Your messages:** Blue bubbles (right side)  
+**Received messages:** Gray bubbles (left side)
 
 ## Tech Stack
 
-### Frontend
-- **Next.js 14.2** - React framework with App Router
-- **React 18** - UI library
-- **TypeScript 5** - Type safety
-- **Tailwind CSS 3.4** - Styling
-- **Radix UI** - Component primitives
-- **Lucide Icons** - Icons
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
-- **Socket.io Client** - WebSocket connection
+**Frontend:** Next.js 14, React 18, TypeScript, Tailwind CSS, Socket.io-client  
+**Backend:** Flask, Flask-SocketIO, Python 3
 
-### Backend
-- **Flask** - Python web framework
-- **Flask-SocketIO** - WebSocket support
-- **Flask-CORS** - Cross-origin support
-- **Python-SocketIO** - Socket.io server
+## Testing locally
 
-## Project Structure
+Open two browser windows:
+- Regular tab at localhost:3000
+- Incognito tab at localhost:3000
+
+Each will have a different Node ID. Paste Node IDs between windows and send messages.
+
+## Network testing
+
+To test between two computers:
+
+1. Find Computer A's IP: run `ipconfig` and look for IPv4 Address (e.g. 192.168.1.100)
+2. On Computer A: run backend and frontend normally
+3. On Computer B: edit `frontend/.env.local` to point to Computer A's IP:
+   ```
+   NEXT_PUBLIC_SOCKET_URL=http://192.168.1.100:5000
+   ```
+4. On Computer B: run frontend only (`npm run dev`)
+5. Exchange Node IDs and start messaging
+
+Make sure port 5000 is allowed through Computer A's firewall.
+
+## Features
+
+- Real-time messaging via WebSocket
+- Text and emoji support
+- Node ID validation (64 hexadecimal characters)
+- Connection status indicator
+- Auto-generated persistent Node IDs
+- No authentication or message history
+
+## Project structure
 
 ```
 simple-messenger/
-├── frontend/          # Next.js + React app
-│   ├── app/          # Next.js app directory
-│   ├── components/   # React components
-│   ├── hooks/        # Custom React hooks
-│   ├── lib/          # Utilities and configs
-│   └── types/        # TypeScript types
-│
-├── backend/          # Flask + SocketIO server
-│   ├── app/          # Application code
-│   ├── config.py     # Configuration
-│   └── run.py        # Entry point
-│
-├── QUICKSTART.md     # Detailed setup guide
-├── TESTING.md        # Testing instructions
-└── README.md         # This file
+├── backend/          Flask + SocketIO server
+│   ├── app/
+│   ├── config.py
+│   └── run.py
+└── frontend/         Next.js + React app
+    ├── app/
+    ├── components/
+    ├── hooks/
+    ├── lib/
+    └── types/
 ```
-
-## How It Works
-
-1. **User connects** → Frontend establishes WebSocket connection
-2. **Node ID registration** → Backend maps Node ID to socket session
-3. **Send message** → Frontend validates and sends via WebSocket
-4. **Backend routes** → Finds receiver by Node ID and forwards message
-5. **Receive message** → Frontend displays in real-time
-6. **Visual feedback** → Sent (blue) vs Received (gray) bubbles
-
-## Screenshots
-
-### Main Interface
-- Connection status indicator (green = connected)
-- Your Node ID with copy button
-- Receiver Node ID input with validation
-- Message list with auto-scroll
-- Message input with emoji support
-
-### Message Colors
-- **Your messages**: Blue gradient bubbles (right-aligned)
-- **Received messages**: Gray bubbles (left-aligned)
-
-## Documentation
-
-- **[QUICKSTART.md](QUICKSTART.md)** - Complete setup and usage guide
-- **[TESTING.md](TESTING.md)** - Testing scenarios and troubleshooting
-- **Backend README** - `backend/README.md`
-- **Frontend README** - `frontend/README.md`
-
-## Development
-
-### Run Backend
-```bash
-cd backend
-python run.py
-```
-Watch logs for:
-```
-✅ Client connected
-📝 Registered: abc123...
-📨 Message: abc123... → def456...
-```
-
-### Run Frontend
-```bash
-cd frontend
-npm run dev
-```
-Open browser DevTools (F12) to see WebSocket logs
-
-## Keyboard Shortcuts
-
-- **Enter** - Send message
-- **Shift + Enter** - New line
-- **Win + .** (Windows) - Emoji picker
-- **Cmd + Ctrl + Space** (Mac) - Emoji picker
-
-## Requirements Met
-
-✅ Text and emoji messaging  
-✅ Chat input field  
-✅ Receiver field with Node ID validation  
-✅ Send and receive messages  
-✅ Socket-based real-time communication  
-✅ Visual distinction by color (blue vs gray)  
-✅ Attractive, modern UI  
-✅ Frontend implementation with Flask API integration  
-✅ All specified technologies used  
 
 ## Troubleshooting
 
-**Connection issues?**
-- Ensure backend is running on port 5000
-- Check `.env.local` has correct socket URL
+**Can't connect?**
+- Check backend is running on port 5000
+- Verify `.env.local` has correct URL
+- Check firewall settings
 
 **Messages not sending?**
 - Both users must be connected (green dot)
-- Receiver Node ID must be valid (64 hex chars)
+- Receiver Node ID must be exactly 64 hex characters
 
-**See detailed troubleshooting in [QUICKSTART.md](QUICKSTART.md)**
-
-## License
-
-MIT License - feel free to use for any purpose
-
----
-
-Built with ⚡ for real-time communication
+**Need fresh Node ID?**
+- Open browser console (F12)
+- Type: `localStorage.clear()`
+- Refresh page
