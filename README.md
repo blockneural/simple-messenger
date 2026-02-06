@@ -80,5 +80,5 @@ Open two browser tabs:
 
 ---
 
-Built with ⚡ by blockneural
+Built with | by blockneural
 
